@@ -9,24 +9,19 @@ object Day20 : Day<Long, Long>(20) {
     private fun solve(lines: List<String>, reps: Int, key: Long): Long {
         val initial = lines.map {it.toLong() * key}.withIndex()
         val size = initial.count()
-        val lastIndex = size -1
         val final = initial.toMutableList()
 
         for(cycle in 1..reps) {
             initial.filter { it.value != 0L }.forEach {
                 val pos = final.indexOf(it)
-                val newPos = (pos + it.value).mod(lastIndex)
+                val newPos = (pos + it.value).mod(size - 1)
                 final.removeAt(pos)
                 final.add(newPos, it)
             }
         }
 
-        return getResult(final, size)
-    }
-
-    private fun getResult(numbers:List<IndexedValue<Long>>, size: Int):Long {
-        val indexZero = numbers.indexOfFirst { it.value == 0L }
-        return listOf(1000,2000,3000).map{i -> numbers[(indexZero + i).mod(size)]}.map {it.value}.reduce(Long::plus)
+        val indexZero = final.indexOfFirst { it.value == 0L }
+        return listOf(1000,2000,3000).map{final[(indexZero + it).mod(size)]}.map {it.value}.reduce(Long::plus)
     }
 
 }
